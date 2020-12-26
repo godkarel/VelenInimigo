@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<form formType="sheetTemplate" dataType="com.InimigoVelen" 
+     title="Velen 4 Inimigos" name="frmIVelen">	
+	<event name="onNodeReady">	
+	</event>	
+	<scrollBox align="client">
+		<image left="185" top="-25" width="140" height="190" editable="true" style="autoFit" field="imgInimigo"/>	
+		-- GAMBIARRA PRA RESOLVER A FALHA NA FOTO --
+		<image left="110" top="-70" width="100" height="100" src="/imagens/2.png"/>
+		<image left="300" top="-70" width="100" height="100" src="/imagens/2.png"/>
+		-- GAMBIARRA PRA RESOLVER A FALHA NA FOTO --
+		<image left="5" top="-70" width="500" height="800" src="/imagens/1.png"/>
+		
+		----------------------------------------------
+		-------------------HP E MP--------------------
+		----------------------------------------------
+		<progressBar left="75" top="160" width="120" height="20" color="red" value="50" max="100"/>
+		<edit left="75" top="160" width="60" height="20" transparent="true" horzTextAlign="center" field="HPAtual"/> 
+		<edit left="135" top="160" width="60" height="20" transparent="true" horzTextAlign="center" field="HPTotal"/> 
+		<button left="407" top="42" width="65" height="65" opacity="0" fontSize="12" fontColor="#00FFFF" onClick="AtaqueBasico()"/>
+		<edit left="35" top="48" width="65" height="40" fontSize="24" transparent="true" horzTextAlign="center" fontColor="blue" type="number" decimalPlaces="0" max="30" min="1" field="level"/>
+		
+		<progressBar left="315" top="160" width="120" height="20" color="cyan" value="50" max="100"/>
+		<edit left="315" top="160" width="60" height="20" transparent="true" horzTextAlign="center" field="MPAtual"/> 
+		<edit left="375" top="160" width="60" height="20" transparent="true" horzTextAlign="center" field="MPTotal"/> 
+		---------------------------------------------		
+		<edit left="145" top="215" width="130" height="20" transparent="false" horzTextAlign="center" field="Nome"/>		
+		<edit left="180" top="237" width="95" height="20" transparent="false" horzTextAlign="center" decimalPlaces="0" type="number" field="Dano"/>
+		<edit left="180" top="263" width="95" height="20" transparent="false" horzTextAlign="center" decimalPlaces="0" type="number" field="DanoMagico"/>
+		<edit left="180" top="289" width="35" height="20" transparent="false" horzTextAlign="center" type="number" field="Defesa"/>
+		<edit left="180" top="314" width="35" height="20" transparent="false" horzTextAlign="center" type="number" field="Resistencia"/>
+		
+		<rectangle left="240" top="289" width="35" height="20" color="blue"  strokeColor="white" strokeSize="1"/>
+		<edit left="240" top="289" width="35" height="20" transparent="true" canFocus="false" horzTextAlign="center" field="DefesaPorCent"/>
+		<rectangle left="240" top="314" width="35" height="20" color="blue" strokeColor="white" strokeSize="1"/>
+		<edit left="240" top="314" width="35" height="20" transparent="true" canFocus="false" horzTextAlign="center" field="ResistenciaPorCent"/>			
+
+		<edit left="360" top="263" width="60" height="20" transparent="false" horzTextAlign="center" type="number" field="Acerto"/> 
+		<edit left="360" top="289" width="60" height="20" transparent="false" horzTextAlign="center" type="number" field="Esquiva"/>
+		<edit left="360" top="314" width="60" height="20" transparent="false" horzTextAlign="center" type="number" field="Critical"/> 			
+		
+		<edit left="220" top="363" width="60" height="20" transparent="false" horzTextAlign="center" field="AcertoMagico"/> 
+		<edit left="220" top="388" width="60" height="20" transparent="false" horzTextAlign="center" field="CriticalMagico"/>
+		<edit left="220" top="413" width="60" height="20" transparent="false" horzTextAlign="center" field="Persistencia"/>
+		<comboBox left="310" top="338" width="100" field="TipoAtaque" fontSize="12" fontColor="red" items="{'Dano Fisico', 'Dano Magico'}"/>			
+		<button left="310" top="363" width="100" height="20"  fontSize="12" fontColor="red" text="Ataque Basico" onClick="AtaqueBasico()"/>	
+		<button left="310" top="388" width="100" height="20"  fontSize="12" fontColor="#00FFFF" text="Extra" onClick="self.popExtra:show();"/>
+		
+		
+       <button text="Nova Habilidade" left="310" top="413" width="100" height="20" fontSize="12" fontColor="#00FFFF">
+				<event name="onClick">                                            
+						self.rclHabilidadeInimigo:append();
+				</event>
+		</button>          
+
+        <recordList name="rclHabilidadeInimigo" left="60" top="450" width="400" height="200" field="campoDosItens" templateForm="frmHabilidadeInimigo"  selectable="true">                           
+                <event name="onSelect">                               
+                  local node = self.rclHabilidadeInimigo.selectedNode; 
+                        self.dscHabilidadeInimigo.node = node;                       
+                        self.dscHabilidadeInimigo.visible = (node ~= nil);
+                </event>
+				
+				<event name="onEndEnumeration">
+					if self.rclHabilidadeInimigo.selectedNode == nil and sheet ~= nil then
+							local nodes = ndb.getChildNodes(sheet.campoDosItens);               
+
+							if #nodes > 0 then
+									self.rclHabilidadeInimigo.selectedNode = nodes[1];
+							end;
+					end;
+				</event>
+        </recordList>
+		
+        <dataScopeBox name="dscHabilidadeInimigo" top="445" left="200" visible="false" width="240" height="200">
+                <rectangle height="200" align="top" color="grey" xradius="10" yradius="10" >
+				<label left="10" top="10" width="70" height="18" text="Skill"/>  
+				<edit left="40" top="10" width="70" height="18" fontSize="10" field="NomeSkill"/> 
+				<label left="115" top="10" width="28" height="18" text="Tipo"/> 
+				<comboBox left="145" top="10" width="90" field="TipoSkill" items="{'Dano', 'Dano Magico', 'Buff', 'Cura', 'Real', 'Defensiva'}"/>		
+				<button left="200" top="162" text="X" fontSize="18" fontColor="red" width="35" height="35" onClick="NDB.deleteNode(self.dscHabilidadeInimigo.node);" />
+				<label left="10" top="150" width="70" height="18" text="Foco"/>
+				<edit left="45" top="150" width="50" height="18" field="Foco"/>
+				<label left="100" top="150" width="70" height="18" text="Custo"/>
+				<edit left="140" top="150" width="50" height="18" field="Custo"/> 				
+				<label left="10" top="175" width="70" height="18" text="Intensidade"/>
+				<edit left="85" top="175" width="70" canFocus="false" height="18" field="Intensidade"/> 
+				<textEditor left="10" top="40" width="160" height="100" fontSize="10" field="DescriHabilidade"/>
+				<button left="175" top="60" width="60" height="60" fontSize="12" fontColor="blue" text="Usar" onClick="AtaqueBasico()"/>
+                </rectangle>
+        </dataScopeBox>		
+	</scrollBox> 
+	
+	<dataLink fields="{'Defesa', 'Resistencia', 'level'}">
+                <event name="onChange">                
+                       
+			---------------------------------------------
+			---------------------------------------------
+			------[[Calculo de Redução Porcentado]]------
+			---------------------------------------------
+			---------------------------------------------	
+			if sheet.Level == 30 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /5);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /5);
+			end;	
+				
+			if sheet.level == 29 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /4.5);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /4.5);
+			end;
+			
+			if sheet.level == 28 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /4.2);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /4.2);
+			end;
+			
+			if sheet.level == 27 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /3.9);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /3.9);
+			end;
+			
+			if sheet.level == 26 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /3.8);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /3.8);
+			end;
+
+			if sheet.level == 25 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /3.6);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /3.6);
+			end;
+			
+			if sheet.level == 24 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /3.4);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /3.4);
+			end;
+			
+			if sheet.level == 23 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /3.2);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /3.2);
+			end;
+			
+			if sheet.level == 22 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /3);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /3);
+			end;
+			
+			if sheet.level == 21 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /2.8);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /2.8);
+			end;
+			
+			if sheet.level == 20 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /2.5);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /2.5);
+			end;
+			
+			if sheet.level == 19 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /2.4);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /2.4);
+			end;
+			
+			if sheet.level == 18 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /2.2);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /2.2);
+			end;
+			
+			if sheet.level == 17 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /2);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /2);
+			end;
+			
+			if sheet.level == 16 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /1.9);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /1.9);
+			end;
+			
+			if sheet.level == 15 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /1.8);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /1.8);
+			end;
+			
+			if sheet.level == 14 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /1.6);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /1.6);
+			end;
+			
+			if sheet.level == 13 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /1.5);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /1.5);
+			end;
+			
+			if sheet.level == 12 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /1.3);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /1.3);
+			end;
+			
+			if sheet.level == 11 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /1.2);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /1.2);
+			end;
+			
+			if sheet.level == 10 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /1.1);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /1.1);
+			end;
+			
+			if sheet.level == 9 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /1);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /1);
+			end;
+			
+			if sheet.level == 8 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /0.92);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /0.92);
+			end;
+			
+			if sheet.level == 7 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /0.8);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /0.8);
+			end;
+			
+			if sheet.level == 6 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /0.7);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /0.7);
+			end;
+			
+			if sheet.level == 5 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /0.5);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /0.5);
+			end;
+			
+			if sheet.level == 4 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /0.4);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /0.4);
+			end;
+			
+			if sheet.level == 3 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /0.3);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /0.3);
+			end;
+			
+			if sheet.level == 2 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /0.2);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /0.2);
+			end;
+			
+			if sheet.level == 1 then 
+				sheet.DefesaPorCent = math.floor((tonumber(sheet.Defesa) or 0) /0.15);
+				sheet.ResistenciaPorCent = math.floor((tonumber(sheet.Resistencia) or 0) /0.15);
+			end;
+                </event>
+    </dataLink>
+
+	<script>
+		local function AtaqueBasico()      
+				local mesaDoPersonagem = Firecast.getMesaDe(sheet);        
+				sheet.Acerto = sheet.Acerto or 0;                        
+				if sheet.TipoAtaque == nil then
+					showMessage("Escolha uma Base de Dano para seu Ataque Basico na lista acima");
+				else				
+					mesaDoPersonagem.chat:rolarDados("1d20 + " .. sheet.Acerto, "[§K2]Ataque Basico",						
+						function (rolado)						
+						local soDado = rolado.resultado + 1 - tonumber(sheet.Acerto);
+							if soDado > tonumber(sheet.Critical) then
+								if sheet.TipoAtaque == 'Dano Fisico' then
+									mesaDoPersonagem.chat:enviarMensagem("[§K4,0]CRITICO CORPO A CORPO CARAI  :awyeah: « " .. sheet.Dano * 2 .. " »");
+								elseif sheet.TipoAtaque == 'Dano Magico' then
+									mesaDoPersonagem.chat:enviarMensagem("[§K4,0]CRITICO A DISTANCIA CARAI :awyeah: « " .. sheet.DanoMagico * 2 .. " »");								
+								end;	
+							else
+								if sheet.TipoAtaque == 'Dano Fisico' then
+									mesaDoPersonagem.chat:enviarMensagem("[§K9,0]Causando como Dano Fisico corpo a corpo « [§K4,0] " .. sheet.Dano .. " [§K9,0]»");
+								elseif sheet.TipoAtaque == 'Dano Magico' then			
+									mesaDoPersonagem.chat:enviarMensagem("[§K9,0]Causando como Dano Fisico a distancia « [§K4,0] " .. sheet.DanoMagico .. " [§K9,0]»");
+								end;							
+							end;							
+					end); 
+				end;
+			end; 		   
+	</script>
+	
+	<popup name="popExtra" width="500" height="700" backOpacity="0.5">
+		<image align="client" src="/imagens/3.png"/> 
+		<edit left="230" top="132" width="50" height="18" fontSize="12" field="Atletismo"/>
+		<edit left="230" top="156" width="50" height="18" fontSize="12" field="Sabedoria"/>
+		<edit left="230" top="180" width="50" height="18" fontSize="12" field="Percepcao"/>
+		<edit left="230" top="204" width="50" height="18" fontSize="12" field="Acrobacia"/>
+		<edit left="230" top="228" width="50" height="18" fontSize="12" field="Vigor"/>
+		
+		<edit left="230" top="324" width="50" height="18" fontSize="12" field="Visao"/>
+		<edit left="230" top="346" width="50" height="18" fontSize="12" field="DistanciaA"/>
+		<edit left="230" top="368" width="50" height="18" fontSize="12" field="RegenMP"/>
+		<edit left="230" top="390" width="50" height="18" fontSize="12" field="Deslocamento"/>
+		<edit left="230" top="412" width="50" height="18" fontSize="12" field="Corrida"/>
+		
+		<button left="300" top="132" width="70" height="20"  fontSize="12" fontColor="#00FFFF" text="Atletismo" onClick="RolarTesteAtletismo()"/>
+			<script>
+				local function RolarTesteAtletismo()      
+					local mesaDoPersonagem = Firecast.getMesaDe(sheet);      
+					sheet.Atletismo = math.floor(tonumber(sheet.Atletismo or 0));                        
+					mesaDoPersonagem.chat:rolarDados("1d20 + " .. sheet.Atletismo, "[§K2]Teste de Atletismo"); 
+				end; 	   
+			</script> 
+		
+		<button left="300" top="156" width="70" height="20"  fontSize="12" fontColor="#00FFFF" text="Sabedoria" onClick="RolarTesteSabedoria()"/>
+			<script>
+				local function RolarTesteSabedoria()      
+					local mesaDoPersonagem = Firecast.getMesaDe(sheet);      
+					sheet.Sabedoria = math.floor(tonumber(sheet.Sabedoria or 0));                       
+					mesaDoPersonagem.chat:rolarDados("1d20 + " .. sheet.Sabedoria, "[§K2]Teste de Sabedoria"); 
+				end; 	   
+			</script>
+
+		<button left="300" top="180" width="70" height="20"  fontSize="12" fontColor="#00FFFF" text="Percepção" onClick="RolarTestePercepcao()"/>
+			<script>
+				local function RolarTestePercepcao()      
+					local mesaDoPersonagem = Firecast.getMesaDe(sheet);      
+					sheet.Percepcao = math.floor(tonumber(sheet.Percepcao or 0));                       
+					mesaDoPersonagem.chat:rolarDados("1d20 + " .. sheet.Percepcao, "[§K2]Teste de Percepcao"); 
+				end; 	   
+			</script> 
+
+		<button left="300" top="204" width="70" height="20"  fontSize="12" fontColor="#00FFFF" text="Acrobacia" onClick="RolarTesteAcrobacia()"/>
+			<script>
+				local function RolarTesteAcrobacia()      
+					local mesaDoPersonagem = Firecast.getMesaDe(sheet);      
+					sheet.Acrobacia = math.floor(tonumber(sheet.Acrobacia or 0));                         
+					mesaDoPersonagem.chat:rolarDados("1d20 + " .. sheet.Acrobacia, "[§K2]Teste de Acrobacia"); 
+				end; 	   
+			</script> 
+
+		<button left="300" top="228" width="70" height="20"  fontSize="12" fontColor="#00FFFF" text="Vigor" onClick="RolarTesteVigor()"/>
+			<script>
+				local function RolarTesteVigor()      
+					local mesaDoPersonagem = Firecast.getMesaDe(sheet);      
+					sheet.Vigor = math.floor(tonumber(sheet.Vigor or 0));                         
+					mesaDoPersonagem.chat:rolarDados("1d20 + " .. sheet.Vigor, "[§K2]Teste de Vigor"); 
+				end; 	   
+			</script> 			
+    </popup> 
+	
+	
+</form>
